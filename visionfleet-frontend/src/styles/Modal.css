@@ -1,0 +1,545 @@
+
+/* ========================================
+   VISION FLEET - SHARED MODAL SYSTEM
+   ======================================== */
+
+/* Dark overlay */
+
+.vfm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(9, 25, 37, 0.7);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  animation: vfm-fade-in 0.18s ease-out;
+}
+
+/* Main dialog */
+
+.vfm-dialog {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-height: min(88vh, 850px);
+  min-height: 0;
+
+  overflow: hidden;
+
+  border: 1px solid #dfe9ed;
+  border-radius: 17px;
+
+  background: #ffffff;
+  color: #203b49;
+
+  box-shadow: 0 26px 85px rgba(0, 0, 0, 0.3);
+
+  animation: vfm-slide-in 0.2s ease-out;
+}
+
+/* Dialog sizes */
+
+.vfm-dialog--sm {
+  max-width: 480px;
+}
+
+.vfm-dialog--md {
+  max-width: 660px;
+}
+
+.vfm-dialog--lg {
+  max-width: 840px;
+}
+
+.vfm-dialog--xl {
+  max-width: 1040px;
+}
+
+/* Header */
+
+.vfm-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 24px;
+  padding: 25px 28px 21px;
+
+  flex-shrink: 0;
+
+  border-bottom: 1px solid #e9eff2;
+  background: #ffffff;
+}
+
+.vfm-header-content {
+  min-width: 0;
+}
+
+.vfm-eyebrow {
+  display: block;
+  margin-bottom: 7px;
+
+  color: #00839e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.vfm-header h2 {
+  margin: 0;
+
+  color: #183342;
+  font-size: 23px;
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
+}
+
+.vfm-header p {
+  margin: 8px 0 0;
+
+  color: #8196a2;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* Close button */
+
+.vfm-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  border: 1px solid #e1e9ee;
+  border-radius: 9px;
+
+  background: #f7fafb;
+  color: #627d8a;
+
+  cursor: pointer;
+}
+
+.vfm-close:hover:not(:disabled) {
+  background: #fceceb;
+  border-color: #eecaca;
+  color: #c14646;
+}
+
+.vfm-close:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Modal content */
+
+.vfm-body {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  padding: 26px 28px;
+
+  background: #ffffff;
+}
+
+/* Form layout */
+
+.vfm-dialog form {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+  min-height: 0;
+
+  overflow: hidden;
+}
+
+.vfm-form-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 20px;
+}
+
+.vfm-full {
+  grid-column: 1 / -1;
+}
+
+.vfm-field {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  gap: 8px;
+}
+
+.vfm-field label {
+  color: #304a58;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.vfm-field input,
+.vfm-field select,
+.vfm-field textarea {
+  width: 100%;
+  min-width: 0;
+
+  box-sizing: border-box;
+
+  border: 1px solid #d7e3e9;
+  border-radius: 9px;
+
+  background: #fbfcfd;
+  color: #243c49;
+
+  padding: 11px 12px;
+
+  font-family: inherit;
+  font-size: 13px;
+
+  outline: none;
+
+  transition:
+    border-color 0.16s,
+    box-shadow 0.16s;
+}
+
+.vfm-field input,
+.vfm-field select {
+  min-height: 44px;
+}
+
+.vfm-field textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.vfm-field input:focus,
+.vfm-field select:focus,
+.vfm-field textarea:focus {
+  border-color: #008ba6;
+  box-shadow:
+    0 0 0 3px rgba(0, 139, 166, 0.11);
+  background: #ffffff;
+}
+
+.vfm-field input:disabled,
+.vfm-field select:disabled,
+.vfm-field textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.vfm-field small {
+  color: #8ca0ac;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* Form information */
+
+.vfm-form-note {
+  padding: 13px 15px;
+
+  border: 1px solid #dcebf0;
+  border-radius: 9px;
+
+  background: #f4fafc;
+  color: #688391;
+
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+/* Footer */
+
+.vfm-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+
+  gap: 11px;
+  padding: 18px 28px;
+
+  flex-shrink: 0;
+
+  border-top: 1px solid #e9eff2;
+  background: #fbfcfd;
+}
+
+/* Shared buttons */
+
+.vfm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+  padding: 10px 18px;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.vfm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vfm-btn-secondary {
+  border: 1px solid #d7e2e8;
+  background: #ffffff;
+  color: #5b7482;
+}
+
+.vfm-btn-secondary:hover:not(:disabled) {
+  background: #f0f5f7;
+}
+
+.vfm-btn-primary {
+  border: 1px solid #007e99;
+  background: #007e99;
+  color: #ffffff;
+}
+
+.vfm-btn-primary:hover:not(:disabled) {
+  background: #006b83;
+}
+
+.vfm-btn-danger {
+  border: 1px solid #e5c39c;
+  background: #fff6e7;
+  color: #a36912;
+}
+
+.vfm-btn-danger:hover:not(:disabled) {
+  background: #ffedca;
+}
+
+.vfm-btn-delete {
+  border: 1px solid #c83636;
+  background: #c83636;
+  color: #ffffff;
+}
+
+.vfm-btn-delete:hover:not(:disabled) {
+  background: #a82b2b;
+}
+
+/* Validation errors */
+
+.vfm-error {
+  margin-bottom: 18px;
+  padding: 12px 14px;
+
+  border: 1px solid #f0c6c6;
+  border-radius: 9px;
+
+  background: #fff3f3;
+  color: #ac3c3c;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* Confirm dialog */
+
+.vfm-confirm-message {
+  margin: 0;
+
+  color: #607986;
+  font-size: 13px;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+/* Recurring booking cancellation */
+
+.vfm-cancel-summary {
+  margin-bottom: 21px;
+  padding: 16px;
+
+  border: 1px solid #e0e9ee;
+  border-radius: 10px;
+
+  background: #f7fafb;
+}
+
+.vfm-cancel-summary p {
+  margin: 0 0 8px;
+
+  color: #5d7786;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.vfm-cancel-summary p:last-child {
+  margin-bottom: 0;
+}
+
+.vfm-cancel-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.vfm-cancel-actions .vfm-btn {
+  width: 100%;
+}
+
+/* Booking list action buttons */
+
+.vf-booking-inline-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+
+  gap: 7px;
+  min-width: max-content;
+
+  white-space: nowrap;
+}
+
+.vf-booking-cancel-action {
+  border: 1px solid #f1d39a;
+  border-radius: 7px;
+
+  padding: 8px 13px;
+
+  background: #fff8e8;
+  color: #a96c0d;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.vf-booking-trash-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+
+  border: 1px solid #f0c8c8;
+  border-radius: 7px;
+
+  background: #fff1f1;
+  color: #d13c3c;
+
+  cursor: pointer;
+}
+
+.vf-booking-inline-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Accessibility */
+
+.vfm-close:focus-visible,
+.vfm-btn:focus-visible {
+  outline: 3px solid #86d0e0;
+  outline-offset: 3px;
+}
+
+/* Animations */
+
+@keyframes vfm-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes vfm-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+  .vfm-overlay {
+    padding: 12px;
+  }
+
+  .vfm-dialog {
+    max-height: 94vh;
+    border-radius: 13px;
+  }
+
+  .vfm-header {
+    padding: 20px;
+  }
+
+  .vfm-header h2 {
+    font-size: 20px;
+  }
+
+  .vfm-body {
+    padding: 20px;
+  }
+
+  .vfm-footer {
+    padding: 15px 20px;
+  }
+
+  .vfm-form-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .vfm-full {
+    grid-column: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vfm-overlay,
+  .vfm-dialog {
+    animation: none;
+  }
+}

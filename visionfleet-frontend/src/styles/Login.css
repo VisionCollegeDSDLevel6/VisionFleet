@@ -1,0 +1,906 @@
+/* =========================================
+   VISION FLEET - LOGIN PAGE
+   Desktop + Tablet + Mobile
+   ========================================= */
+
+.vf2-login,
+.vf2-login * {
+  box-sizing: border-box;
+}
+
+.vf2-login {
+  display: grid;
+  grid-template-columns: minmax(0, 43fr) minmax(0, 57fr);
+
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  margin: 0;
+  padding: 0;
+
+  background: #ffffff;
+  font-family:
+    Inter,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+/* =========================================
+   LEFT HERO PANEL
+   ========================================= */
+
+.vf2-hero {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  padding: 38px clamp(28px, 3.5vw, 70px) 24px;
+
+  overflow: hidden;
+  isolation: isolate;
+
+  color: #ffffff;
+
+  background:
+    radial-gradient(
+      ellipse at 85% 60%,
+      rgba(0, 166, 215, 0.4),
+      transparent 60%
+    ),
+    linear-gradient(
+      145deg,
+      #061a31 0%,
+      #073c61 50%,
+      #057ba4 100%
+    );
+}
+
+/* Decorative circles */
+
+.vf2-hero::before {
+  content: "";
+
+  position: absolute;
+  top: -200px;
+  right: -230px;
+
+  width: 620px;
+  height: 620px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+
+  pointer-events: none;
+  z-index: -1;
+}
+
+.vf2-hero::after {
+  content: "";
+
+  position: absolute;
+  bottom: -370px;
+  left: -180px;
+
+  width: 700px;
+  height: 700px;
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* =========================================
+   HERO TEXT
+   ========================================= */
+
+.vf2-hero-copy {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.vf2-college-tag {
+  display: inline-block;
+
+  margin: 0 0 30px;
+  padding: 10px 17px;
+
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.07);
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  line-height: 1.4;
+}
+
+.vf2-hero-title {
+  margin: 0;
+  max-width: 620px;
+
+  color: #ffffff;
+
+  font-size: clamp(34px, 3.4vw, 60px);
+  font-weight: 850;
+  line-height: 1.1;
+  letter-spacing: -1.7px;
+}
+
+.vf2-hero-title span {
+  display: block;
+  color: #86deff;
+}
+
+.vf2-hero-description {
+  max-width: 520px;
+
+  margin: 20px 0 0;
+
+  color: #d5eaf5;
+
+  font-size: clamp(14px, 1.1vw, 17px);
+  line-height: 1.7;
+}
+
+/* =========================================
+   HERO IMAGE
+   ========================================= */
+
+.vf2-hero-art {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex: 1;
+
+  align-items: flex-end;
+  justify-content: center;
+
+  min-height: 0;
+  width: 100%;
+
+  margin-top: 15px;
+}
+
+.vf2-hero-art img {
+  display: block;
+
+  width: auto;
+  max-width: 110%;
+  height: auto;
+  max-height: min(59vh, 650px);
+
+  object-fit: contain;
+  object-position: center bottom;
+
+  filter: drop-shadow(
+    0 15px 30px rgba(0, 0, 0, 0.17)
+  );
+}
+
+.vf2-hero-footer {
+  position: relative;
+  z-index: 2;
+
+  flex-shrink: 0;
+
+  margin: 15px 0 0;
+
+  color: rgba(255, 255, 255, 0.66);
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================
+   RIGHT LOGIN PANEL
+   ========================================= */
+
+.vf2-form-side {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+
+  padding: 48px clamp(32px, 5vw, 95px);
+
+  background: #ffffff;
+}
+
+.vf2-login-card {
+  width: 100%;
+  max-width: 545px;
+
+  margin: 0 auto;
+  padding: 0;
+
+  color: #102d46;
+}
+
+/* =========================================
+   LOGIN HEADING
+   ========================================= */
+
+.vf2-login-heading {
+  width: 100%;
+}
+
+.vf2-logo {
+  display: block;
+
+  width: auto;
+  max-width: 245px;
+  max-height: 105px;
+
+  height: auto;
+
+  margin: 0 0 40px;
+
+  object-fit: contain;
+  object-position: left center;
+}
+
+.vf2-form-eyebrow {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color: #0088b6;
+
+  font-size: 25px;
+  font-weight: 850;
+  letter-spacing: 1.8px;
+}
+
+.vf2-form-title {
+  margin: 0 0 12px;
+
+  color: #0b2c46;
+
+  font-size: clamp(36px, 3.25vw, 52px);
+  font-weight: 850;
+  line-height: 1.13;
+  letter-spacing: -1.5px;
+}
+
+.vf2-form-description {
+  margin: 0 0 36px;
+
+  color: #6f8798;
+
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   LOGIN FORM
+   ========================================= */
+
+.vf2-login-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 22px;
+
+  width: 100%;
+  margin: 0;
+}
+
+.vf2-form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+.vf2-form-group label {
+  color: #163751;
+
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.vf2-form-group input {
+  display: block;
+
+  width: 100%;
+  height: 58px;
+
+  min-height: 58px;
+  margin: 0;
+  padding: 0 18px;
+
+  border: 1px solid #d6e3ec;
+  border-radius: 12px;
+
+  outline: none;
+
+  background: #f8fbfd;
+  color: #15334a;
+
+  font: inherit;
+  font-size: 15px;
+
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
+}
+
+.vf2-form-group input::placeholder {
+  color: #93a6b7;
+}
+
+.vf2-form-group input:focus {
+  border-color: #078ab8;
+
+  background: #ffffff;
+
+  box-shadow: 0 0 0 4px
+    rgba(0, 139, 186, 0.12);
+}
+
+.vf2-form-group input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   LOGIN ERROR
+   ========================================= */
+
+.vf2-error {
+  margin: 0;
+
+  padding: 12px 14px;
+
+  border: 1px solid #f2b9c0;
+  border-radius: 10px;
+
+  background: #fff1f2;
+  color: #ad2536;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   SIGN IN BUTTON
+   ========================================= */
+
+.vf2-submit {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 58px;
+
+  margin: 2px 0 0;
+  padding: 14px 20px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: linear-gradient(
+    100deg,
+    #056b9c,
+    #069fc8
+  );
+
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.vf2-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow: 0 10px 25px
+    rgba(0, 120, 170, 0.22);
+}
+
+.vf2-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.vf2-submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* =========================================
+   HELP TEXT
+   ========================================= */
+
+.vf2-help {
+  margin: 30px 0 0;
+
+  color: #667d8d;
+
+  text-align: center;
+
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.vf2-security {
+  margin: 27px 0 0;
+  padding: 20px 0 0;
+
+  border-top: 1px solid #e6edf2;
+
+  color: #869ba9;
+
+  text-align: center;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   MEDIUM DESKTOP
+   ========================================= */
+
+@media (min-width: 961px) and (max-width: 1200px) {
+  .vf2-hero {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .vf2-hero-title {
+    font-size: clamp(32px, 3.1vw, 44px);
+  }
+
+  .vf2-form-side {
+    padding-left: 45px;
+    padding-right: 45px;
+  }
+
+  .vf2-form-title {
+    font-size: 41px;
+  }
+}
+
+/* =========================================
+   SHORT DESKTOP SCREENS
+   ========================================= */
+
+@media (min-width: 961px) and (max-height: 760px) {
+  .vf2-hero {
+    padding-top: 24px;
+    padding-bottom: 16px;
+  }
+
+  .vf2-college-tag {
+    margin-bottom: 17px;
+  }
+
+  .vf2-hero-title {
+    font-size: clamp(32px, 2.8vw, 46px);
+  }
+
+  .vf2-hero-description {
+    margin-top: 11px;
+    font-size: 14px;
+  }
+
+  .vf2-hero-art img {
+    max-height: 48vh;
+  }
+
+  .vf2-form-side {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .vf2-logo {
+    max-height: 65px;
+    margin-bottom: 22px;
+  }
+
+  .vf2-form-description {
+    margin-bottom: 22px;
+  }
+
+  .vf2-login-form {
+    gap: 14px;
+  }
+
+  .vf2-help {
+    margin-top: 18px;
+  }
+
+  .vf2-security {
+    margin-top: 15px;
+    padding-top: 12px;
+  }
+}
+
+/* =========================================
+   TABLET + MOBILE
+   Form card on BLUE background
+   ========================================= */
+
+@media (max-width: 960px) {
+  .vf2-login {
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100vh;
+    min-height: 100dvh;
+
+    background:
+      radial-gradient(
+        ellipse at 90% 15%,
+        rgba(1, 171, 217, 0.32),
+        transparent 55%
+      ),
+      linear-gradient(
+        160deg,
+        #061b35 0%,
+        #06476e 55%,
+        #087fa5 100%
+      );
+  }
+
+  /* HERO */
+
+  .vf2-hero {
+    min-height: 310px;
+    height: auto;
+
+    flex: 0 0 auto;
+
+    padding: 28px 28px 0;
+
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .vf2-hero-copy {
+    flex-shrink: 0;
+  }
+
+  .vf2-college-tag {
+    margin-bottom: 13px;
+    padding: 7px 13px;
+
+    font-size: 10px;
+    letter-spacing: 1.6px;
+  }
+
+  .vf2-hero-title {
+    font-size: 31px;
+    line-height: 1.12;
+    letter-spacing: -1px;
+  }
+
+  .vf2-hero-description {
+    margin-top: 10px;
+    max-width: 500px;
+
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .vf2-hero-art {
+    flex: 1;
+    min-height: 0;
+    margin-top: 6px;
+  }
+
+  .vf2-hero-art img {
+    max-width: 100%;
+    max-height: 205px;
+  }
+
+  .vf2-hero-footer {
+    display: none;
+  }
+
+  /* WHITE LOGIN CARD */
+
+  .vf2-form-side {
+    position: relative;
+    z-index: 4;
+
+    display: block;
+
+    min-height: 0;
+    width: calc(100% - 40px);
+    max-width: 620px;
+
+    margin: -6px auto 30px;
+    padding: 0;
+
+    background: transparent;
+  }
+
+  .vf2-login-card {
+    width: 100%;
+    max-width: none;
+
+    padding: 34px 35px;
+
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 22px;
+
+    background: #ffffff;
+
+    box-shadow:
+      0 20px 45px rgba(0, 15, 40, 0.2);
+  }
+
+  .vf2-logo {
+    max-width: 180px;
+    max-height: 70px;
+    margin-bottom: 22px;
+  }
+
+  .vf2-form-title {
+    font-size: 35px;
+  }
+
+  .vf2-form-description {
+    margin-bottom: 25px;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+   ========================================= */
+
+@media (max-width: 540px) {
+  .vf2-login {
+    overflow-x: hidden;
+  }
+
+  .vf2-hero {
+    min-height: 275px;
+
+    padding: 21px 20px 0;
+  }
+
+  .vf2-college-tag {
+    margin-bottom: 10px;
+
+    padding: 6px 11px;
+
+    font-size: 9px;
+    letter-spacing: 1.2px;
+  }
+
+  .vf2-hero-title {
+    font-size: clamp(24px, 6vw, 29px);
+    letter-spacing: -0.8px;
+  }
+
+  .vf2-hero-description {
+    max-width: 340px;
+
+    margin-top: 8px;
+
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .vf2-hero-art {
+    margin-top: 0;
+  }
+
+  .vf2-hero-art img {
+    max-height: 170px;
+  }
+
+  /* Login card */
+
+  .vf2-form-side {
+    width: calc(100% - 28px);
+
+    margin: -8px auto 24px;
+  }
+
+  .vf2-login-card {
+    padding: 27px 22px 30px;
+
+    border-radius: 18px;
+  }
+
+  .vf2-logo {
+    max-width: 145px;
+    max-height: 60px;
+    margin-bottom: 20px;
+  }
+
+  .vf2-form-eyebrow {
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    margin-bottom: 9px;
+  }
+
+  .vf2-form-title {
+    font-size: 30px;
+    letter-spacing: -1px;
+  }
+
+  .vf2-form-description {
+    font-size: 13px;
+
+    margin-bottom: 24px;
+  }
+
+  .vf2-login-form {
+    gap: 17px;
+  }
+
+  .vf2-form-group label {
+    font-size: 13px;
+  }
+
+  .vf2-form-group input {
+    height: 52px;
+    min-height: 52px;
+
+    padding: 0 14px;
+
+    font-size: 14px;
+  }
+
+  .vf2-submit {
+    min-height: 52px;
+
+    font-size: 15px;
+  }
+
+  .vf2-help {
+    margin-top: 23px;
+    font-size: 12px;
+  }
+
+  .vf2-security {
+    margin-top: 18px;
+    padding-top: 16px;
+
+    font-size: 11px;
+  }
+}
+
+/* =========================================
+   VERY SMALL PHONES
+   ========================================= */
+
+@media (max-width: 360px) {
+  .vf2-hero {
+    min-height: 250px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .vf2-hero-title {
+    font-size: 23px;
+  }
+
+  .vf2-hero-description {
+    font-size: 11px;
+  }
+
+  .vf2-hero-art img {
+    max-height: 145px;
+  }
+
+  .vf2-login-card {
+    padding: 24px 17px;
+  }
+
+  .vf2-form-group input {
+    font-size: 13px;
+  }
+}
+
+/* =========================================
+   VISION FLEET LOGO - LEFT HERO PANEL
+   ========================================= */
+
+.vf2-hero-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+  max-width: 100%;
+
+  margin: 0 0 32px;
+  padding: 13px 20px;
+
+  border-radius: 15px;
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.13);
+}
+
+.vf2-hero-logo {
+  display: block;
+  width: 240px;
+  max-width: 100%;
+  height: auto;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+/* Remove unused right-side logo spacing */
+.vf2-login-heading {
+  margin-top: 0;
+}
+
+/* Tablet */
+
+@media (max-width: 960px) {
+  .vf2-hero-brand {
+    padding: 10px 15px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+  }
+
+  .vf2-hero-logo {
+    width: 190px;
+    max-height: 65px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 540px) {
+  .vf2-hero-brand {
+    padding: 8px 12px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+  }
+
+  .vf2-hero-logo {
+    width: 155px;
+    max-height: 52px;
+  }
+}
+
+/* Small screens with limited height */
+
+@media (min-width: 961px) and (max-height: 760px) {
+  .vf2-hero-brand {
+    margin-bottom: 18px;
+    padding: 9px 15px;
+  }
+
+  .vf2-hero-logo {
+    width: 205px;
+    max-height: 60px;
+  }
+}

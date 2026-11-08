@@ -1,0 +1,524 @@
+
+/* =====================================
+   VISION FLEET - DRIVER INTERFACE
+   MOBILE FIRST
+   ===================================== */
+
+.vd-app {
+  min-height: 100dvh;
+  background: #f5f8fb;
+  color: #213b4b;
+  font-family: inherit;
+}
+
+.vd-app *,
+.vd-app *::before,
+.vd-app *::after {
+  box-sizing: border-box;
+}
+
+.vd-app button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.vd-app button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Header */
+
+.vd-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: #fff;
+  border-bottom: 1px solid #e2eaf0;
+}
+
+.vd-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 66px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.vd-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.vd-brand img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
+.vd-brand strong {
+  color: #174154;
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+.vd-logout {
+  padding: 10px 12px;
+  border: 1px solid #dce8ee;
+  border-radius: 9px;
+  background: #fff;
+  color: #4e6879;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Main layout */
+
+.vd-main {
+  width: min(100%, 850px);
+  margin: 0 auto;
+  padding: 24px 16px 65px;
+}
+
+.vd-welcome {
+  margin-bottom: 24px;
+  padding: 25px;
+  border-radius: 16px;
+  background: linear-gradient(
+    130deg,
+    #103c50,
+    #13738e
+  );
+  color: #fff;
+}
+
+.vd-welcome > span {
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  font-weight: 800;
+  color: #b8e7f2;
+}
+
+.vd-welcome h1 {
+  margin: 10px 0;
+  color: #fff;
+  font-size: clamp(23px, 5vw, 32px);
+  overflow-wrap: anywhere;
+}
+
+.vd-welcome p {
+  max-width: 560px;
+  margin: 0;
+  color: #d4edf5;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* Tabs */
+
+.vd-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 25px;
+  padding: 5px;
+  border-radius: 12px;
+  background: #e9eff3;
+}
+
+.vd-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #6d8593;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.vd-tabs button.vd-tab-active {
+  background: #fff;
+  color: #007c9a;
+  box-shadow: 0 2px 9px #13374812;
+}
+
+.vd-tabs span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 23px;
+  height: 23px;
+  padding: 0 5px;
+  border-radius: 14px;
+  background: #eef5f7;
+  font-size: 11px;
+}
+
+/* List heading */
+
+.vd-list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.vd-list-heading h2 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.vd-list-heading button {
+  padding: 8px 10px;
+  border: 0;
+  background: transparent;
+  color: #007d9c;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Trip cards */
+
+.vd-trip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vd-trip-card {
+  padding: 21px;
+  border: 1px solid #e2eaf0;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 4px 16px #122b3b07;
+}
+
+.vd-trip-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.vd-trip-number {
+  color: #00809e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+}
+
+.vd-status {
+  padding: 7px 11px;
+  border-radius: 18px;
+  background: #edf1f4;
+  color: #5e7684;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.vd-status-scheduled {
+  background: #e6f4fa;
+  color: #007b9c;
+}
+
+.vd-status-in_progress {
+  background: #fff1d8;
+  color: #9a690e;
+}
+
+.vd-status-completed {
+  background: #e6f7ed;
+  color: #218253;
+}
+
+.vd-trip-card h2 {
+  margin: 0 0 8px;
+  color: #223f4f;
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+.vd-trip-vehicle {
+  margin: 0;
+  color: #748f9e;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.vd-trip-info {
+  display: grid;
+  grid-template-columns: repeat(
+    2,
+    minmax(0, 1fr)
+  );
+  gap: 17px;
+  padding: 19px 0;
+  margin-top: 17px;
+  border-top: 1px solid #ebf0f3;
+}
+
+.vd-trip-info > div {
+  min-width: 0;
+}
+
+.vd-trip-info span,
+.vd-trip-actual span {
+  display: block;
+  margin-bottom: 6px;
+  color: #8b9faa;
+  font-size: 11px;
+}
+
+.vd-trip-info strong,
+.vd-trip-actual strong {
+  display: block;
+  color: #355564;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.vd-trip-actual {
+  padding: 14px;
+  margin-bottom: 13px;
+  border-radius: 9px;
+  background: #f1fafc;
+}
+
+.vd-trip-time {
+  padding: 10px 0;
+  color: #708795;
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+/* Start / End buttons */
+
+.vd-primary {
+  width: 100%;
+  min-height: 52px;
+  margin-top: 8px;
+  padding: 13px 20px;
+  border: 0;
+  border-radius: 11px;
+  background: #0085a2;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.vd-primary:hover {
+  background: #006e86;
+}
+
+.vd-end-button {
+  background: #16805d;
+}
+
+.vd-end-button:hover {
+  background: #126849;
+}
+
+.vd-trip-warning {
+  padding: 12px;
+  border-radius: 9px;
+  background: #fff5e6;
+  color: #9c7029;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* Confirm modal content */
+
+.vd-confirm-info {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 16px;
+  border: 1px solid #e2ebf0;
+  border-radius: 10px;
+  background: #f7fafc;
+  color: #627e8e;
+  font-size: 12px;
+}
+
+.vd-confirm-info strong {
+  margin-bottom: 4px;
+  color: #2e4e5f;
+  font-size: 15px;
+}
+
+.vd-count-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.vd-count-field > span {
+  color: #365869;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.vd-count-field input {
+  width: 100%;
+  height: 52px;
+  padding: 10px 15px;
+  border: 1px solid #d5e4ec;
+  border-radius: 10px;
+  background: #fff;
+  color: #1f4050;
+  font-size: 20px;
+  font-weight: 750;
+}
+
+.vd-count-field small {
+  color: #849ba6;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.vd-confirm-text {
+  margin: 18px 0 0;
+  color: #617d8c;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+/* Alerts and empty state */
+
+.vd-alert {
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.vd-error {
+  background: #fff3f3;
+  border: 1px solid #edc7c7;
+  color: #a74040;
+}
+
+.vd-success {
+  background: #eaf8f0;
+  border: 1px solid #c1e5d2;
+  color: #217950;
+}
+
+.vd-empty {
+  padding: 45px 20px;
+  border: 1px dashed #d8e5eb;
+  border-radius: 13px;
+  background: #fff;
+  color: #78909d;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.vd-empty h3 {
+  color: #2c4c5b;
+  font-size: 17px;
+}
+
+.vd-empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e6f5ed;
+  color: #16805d;
+  font-size: 24px;
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+  .vd-header-inner {
+    min-height: 60px;
+    padding: 0 13px;
+  }
+
+  .vd-brand strong {
+    font-size: 16px;
+  }
+
+  .vd-brand img {
+    width: 33px;
+    height: 33px;
+  }
+
+  .vd-main {
+    padding: 15px 13px 50px;
+  }
+
+  .vd-welcome {
+    padding: 21px;
+  }
+
+  .vd-trip-card {
+    padding: 18px;
+  }
+
+  .vd-trip-card h2 {
+    font-size: 17px;
+  }
+
+  .vd-trip-info {
+    gap: 15px 10px;
+  }
+
+  .vd-trip-info strong {
+    font-size: 12px;
+  }
+
+  .vd-tabs button {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vd-app * {
+    scroll-behavior: auto;
+  }
+}
+.driver-trip-purpose {
+  padding: 14px 16px;
+  margin: 14px 0;
+  border-radius: 10px;
+  background: #eef7ff;
+  border-left: 4px solid #0284c7;
+}
+
+.driver-trip-purpose strong {
+  display: block;
+  color: #0369a1;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.driver-trip-purpose p {
+  margin: 0;
+  color: #17324d;
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

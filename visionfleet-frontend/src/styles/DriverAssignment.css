@@ -1,0 +1,494 @@
+/* Driver Assignment page — independent of modal styles. */
+.vf-driver-page {
+  width: 100%;
+  min-width: 0;
+  color: #172c3a;
+}
+
+.vf-driver-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin: 5px 0 26px;
+}
+
+.vf-driver-eyebrow {
+  display: block;
+  color: #007f9e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  margin-bottom: 9px;
+}
+
+.vf-driver-header h1 {
+  font-size: clamp(26px, 3vw, 34px);
+  margin: 0 0 8px;
+  letter-spacing: -0.8px;
+}
+
+.vf-driver-header p {
+  margin: 0;
+  color: #718694;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.vf-driver-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 37px;
+  padding: 8px 13px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.vf-driver-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vf-driver-btn:focus-visible {
+  outline: 3px solid #89d3df;
+  outline-offset: 2px;
+}
+
+.vf-driver-btn-primary {
+  background: #007f9e;
+  border-color: #007f9e;
+  color: white;
+}
+
+.vf-driver-btn-primary:hover:not(:disabled) {
+  background: #006b85;
+}
+
+.vf-driver-btn-ghost {
+  background: #fff;
+  border-color: #dae5eb;
+  color: #355363;
+}
+
+.vf-driver-btn-ghost:hover:not(:disabled) {
+  background: #eff7fa;
+}
+
+.vf-driver-btn-remove {
+  background: #fff5ed;
+  border-color: #efd4bd;
+  color: #a15b20;
+}
+
+.vf-driver-btn-remove:hover:not(:disabled) {
+  background: #ffead9;
+}
+
+.vf-driver-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 24px;
+}
+
+.vf-driver-stat {
+  padding: 20px;
+  border: 1px solid #e2eaf0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.vf-driver-stat span {
+  color: #637e8e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.vf-driver-stat strong {
+  display: block;
+  margin: 15px 0 9px;
+  font-size: 31px;
+  color: #172c3a;
+  line-height: 1.1;
+}
+
+.vf-driver-stat small {
+  color: #93a7b1;
+  font-size: 11px;
+}
+
+.vf-driver-alert {
+  padding: 14px 17px;
+  border-radius: 9px;
+  margin-bottom: 18px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.vf-driver-alert-error {
+  background: #fff3f3;
+  color: #a12c29;
+  border: 1px solid #f0c9c4;
+}
+
+.vf-driver-alert-success {
+  background: #effaf4;
+  color: #19774f;
+  border: 1px solid #bde3ce;
+}
+
+.vf-driver-panel {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e2eaf0;
+  border-radius: 13px;
+}
+
+.vf-driver-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 23px 25px;
+  border-bottom: 1px solid #edf2f5;
+}
+
+.vf-driver-panel-head h2 {
+  margin: 0 0 7px;
+  font-size: 17px;
+}
+
+.vf-driver-panel-head p {
+  margin: 0;
+  font-size: 12px;
+  color: #8195a1;
+  line-height: 1.6;
+}
+
+.vf-driver-count {
+  display: inline-block;
+  background: #eaf6f9;
+  color: #007f9e;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.vf-driver-toolbar {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 20px 25px;
+  border-bottom: 1px solid #edf2f5;
+}
+
+.vf-driver-search, .vf-driver-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vf-driver-search {
+  flex: 1;
+  min-width: 210px;
+}
+
+.vf-driver-filter {
+  width: 230px;
+  max-width: 100%;
+}
+
+.vf-driver-toolbar label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #617c8a;
+}
+
+.vf-driver-toolbar input, .vf-driver-toolbar select {
+  box-sizing: border-box;
+  width: 100%;
+  height: 43px;
+  border: 1px solid #dce6eb;
+  border-radius: 8px;
+  padding: 0 13px;
+  background: #fff;
+  color: #263f4d;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.vf-driver-toolbar input:focus, .vf-driver-toolbar select:focus {
+  outline: 2px solid #88cddd;
+}
+
+.vf-driver-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.vf-driver-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1020px;
+  text-align: left;
+}
+
+.vf-driver-table th {
+  background: #f9fbfc;
+  padding: 15px 18px;
+  border-bottom: 1px solid #edf2f5;
+  color: #8298a4;
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+}
+
+.vf-driver-table td {
+  padding: 17px 18px;
+  border-bottom: 1px solid #edf2f5;
+  vertical-align: middle;
+  font-size: 12px;
+  color: #45606e;
+}
+
+.vf-driver-table tbody tr:hover {
+  background: #f8fcfd;
+}
+
+.vf-driver-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.vf-driver-table td strong {
+  display: block;
+  color: #213c4b;
+  font-size: 12px;
+}
+
+.vf-driver-table td small {
+  display: block;
+  margin-top: 5px;
+  color: #8da3ae;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.vf-driver-status {
+  display: inline-flex;
+  padding: 7px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.vf-driver-status-assigned {
+  background: #e8f7ee;
+  color: #18815d;
+}
+
+.vf-driver-status-pending {
+  background: #fff5df;
+  color: #a36c15;
+}
+
+.vf-driver-status-neutral {
+  background: #edf2f5;
+  color: #607d8a;
+}
+
+.vf-driver-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.vf-driver-empty {
+  padding: 55px 18px;
+  text-align: center;
+  font-size: 13px;
+  color: #8297a5;
+}
+
+.vf-driver-empty strong {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 15px;
+  color: #294858;
+}
+
+.vf-driver-empty p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.vf-driver-panel-foot {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 17px 25px;
+  border-top: 1px solid #edf2f5;
+  font-size: 11px;
+  color: #94a6b0;
+}
+
+.vf-driver-booking-info {
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  background: #f7fafb;
+  border: 1px solid #e0e9ee;
+  border-radius: 10px;
+}
+
+.vf-driver-booking-info p {
+  margin: 0 0 9px;
+  color: #607987;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.vf-driver-booking-info p:last-child {
+  margin-bottom: 0;
+}
+
+.vf-driver-booking-info strong {
+  color: #294858;
+}
+
+.vf-driver-field-warning {
+  color: #a15b20;
+  font-size: 12px;
+}
+
+@media (max-width: 950px) {
+.vf-driver-summary {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+
+}
+
+@media (max-width: 620px) {
+.vf-driver-toolbar {
+  padding: 17px;
+}
+
+.vf-driver-search, .vf-driver-filter {
+  min-width: 0;
+  width: 100%;
+}
+
+.vf-driver-panel-head {
+  padding: 19px 17px;
+}
+
+.vf-driver-summary {
+  gap: 9px;
+}
+
+.vf-driver-stat {
+  padding: 14px;
+}
+
+.vf-driver-stat strong {
+  font-size: 25px;
+}
+
+.vf-driver-panel-foot {
+  padding: 16px 17px;
+}
+
+
+}
+
+/* =====================================
+   DRIVER ASSIGNMENT + JOURNEY HISTORY
+   ===================================== */
+
+.vf-driver-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 22px;
+  border-bottom: 1px solid #dce8ed;
+}
+
+.vf-driver-tabs button {
+  min-height: 45px;
+  padding: 10px 19px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: #607d8c;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.vf-driver-tabs button.vf-driver-tab-active {
+  border-bottom-color: #007f9e;
+  color: #007f9e;
+}
+
+.vf-driver-tabs button:focus-visible {
+  outline: 3px solid #89d3df;
+  outline-offset: 2px;
+}
+
+.vf-history-table {
+  min-width: 1100px;
+}
+
+.vf-history-passengers {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 17px;
+}
+
+.vf-history-passengers > div {
+  padding: 17px;
+  border: 1px solid #dbe8ee;
+  border-radius: 10px;
+  background: #f5fafc;
+}
+
+.vf-history-passengers span {
+  display: block;
+  color: #6a8593;
+  font-size: 12px;
+}
+
+.vf-history-passengers strong {
+  display: block;
+  margin-top: 8px;
+  color: #173c4d;
+  font-size: 23px;
+}
+
+@media (max-width: 620px) {
+  .vf-driver-tabs button {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .vf-history-passengers strong {
+    font-size: 17px;
+  }
+}
+

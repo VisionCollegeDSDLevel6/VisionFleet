@@ -1,0 +1,6 @@
+@VisionFleet.API_HostAddress = http://localhost:5115
+
+GET {{VisionFleet.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
