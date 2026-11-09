@@ -67,7 +67,9 @@ async function getApiList(url, signal) {
       throw new Error("Access denied.");
     }
 
-    throw new Error(`API request failed (HTTP ${response.status}).`);
+    throw new Error(
+      `API request failed (HTTP ${response.status}).`
+    );
   }
 
   const result = await response.json();
@@ -83,7 +85,10 @@ function SectionHeading({ eyebrow, title, right }) {
   return (
     <div className="vf-section-heading">
       <div>
-        <span className="vf-eyebrow">{eyebrow}</span>
+        <span className="vf-eyebrow">
+          {eyebrow}
+        </span>
+
         <h2>{title}</h2>
       </div>
 
@@ -192,7 +197,7 @@ export default function DashboardHome({ onNavigate }) {
   const [lastUpdated, setLastUpdated] = useState(null);
 
   // =====================================
-  // Load live dashboard data
+  // Load dashboard data
   // =====================================
 
   useEffect(() => {
@@ -236,9 +241,17 @@ export default function DashboardHome({ onNavigate }) {
         } else {
           nextErrors[name] = getMessage(result.reason);
 
-          if (name === "bookings") setBookings([]);
-          if (name === "vans") setVans([]);
-          if (name === "maintenance") setMaintenance([]);
+          if (name === "bookings") {
+            setBookings([]);
+          }
+
+          if (name === "vans") {
+            setVans([]);
+          }
+
+          if (name === "maintenance") {
+            setMaintenance([]);
+          }
         }
       });
 
@@ -257,7 +270,7 @@ export default function DashboardHome({ onNavigate }) {
   }
 
   // =====================================
-  // Actual statistics
+  // Statistics
   // =====================================
 
   const pendingBookings = useMemo(
@@ -265,7 +278,8 @@ export default function DashboardHome({ onNavigate }) {
       bookings
         .filter(
           (booking) =>
-            normaliseStatus(booking.status) === "PENDING"
+            normaliseStatus(booking.status) ===
+            "PENDING"
         )
         .sort(
           (a, b) =>
@@ -277,7 +291,8 @@ export default function DashboardHome({ onNavigate }) {
 
   const approvedCount = bookings.filter(
     (booking) =>
-      normaliseStatus(booking.status) === "APPROVED"
+      normaliseStatus(booking.status) ===
+      "APPROVED"
   ).length;
 
   const availableCount = vans.filter(
@@ -288,16 +303,19 @@ export default function DashboardHome({ onNavigate }) {
 
   const activeMaintenanceCount = maintenance.filter(
     (record) =>
-      normaliseStatus(record.status) === "IN_PROGRESS"
+      normaliseStatus(record.status) ===
+      "IN_PROGRESS"
   ).length;
 
-  const scheduledMaintenanceCount = maintenance.filter(
-    (record) =>
-      normaliseStatus(record.status) === "SCHEDULED"
-  ).length;
+  const scheduledMaintenanceCount =
+    maintenance.filter(
+      (record) =>
+        normaliseStatus(record.status) ===
+        "SCHEDULED"
+    ).length;
 
   // =====================================
-  // Join Booking with Van registration
+  // Booking -> Van lookup
   // =====================================
 
   const vanLookup = useMemo(() => {
@@ -349,10 +367,16 @@ export default function DashboardHome({ onNavigate }) {
 
   const errorCount = Object.keys(errors).length;
 
+  // =====================================
+  // Render
+  // =====================================
+
   return (
     <div className="vf-dashboard-page">
+
       {/* ===================================
-          Hero
+          HERO
+          Two buttons removed
           =================================== */}
 
       <section className="vf-hero">
@@ -368,31 +392,13 @@ export default function DashboardHome({ onNavigate }) {
           </h1>
 
           <p>
-            Manage vehicle bookings, keep track of your
-            fleet and coordinate drivers from one central
-            workspace.
+            Manage vehicle bookings, keep track
+            of your fleet and coordinate drivers
+            from one central workspace.
           </p>
-
-          <div className="vf-hero-buttons">
-            <button
-              type="button"
-              className="vf-button-primary"
-              onClick={() => onNavigate("bookings")}
-            >
-              Review bookings
-              <Icon name="arrow" size={17} />
-            </button>
-
-            <button
-              type="button"
-              className="vf-button-outline"
-              onClick={() => onNavigate("vans")}
-            >
-              Manage vans
-              <Icon name="chevron" size={17} />
-            </button>
-          </div>
         </div>
+
+        {/* Quick Access stays unchanged */}
 
         <div className="vf-quick-access">
           <p>QUICK ACCESS</p>
@@ -406,6 +412,7 @@ export default function DashboardHome({ onNavigate }) {
             </span>
 
             Booking Approvals
+
             <Icon name="arrow" size={16} />
           </button>
 
@@ -418,6 +425,7 @@ export default function DashboardHome({ onNavigate }) {
             </span>
 
             Van Management
+
             <Icon name="arrow" size={16} />
           </button>
 
@@ -430,13 +438,14 @@ export default function DashboardHome({ onNavigate }) {
             </span>
 
             Driver Assignment
+
             <Icon name="arrow" size={16} />
           </button>
         </div>
       </section>
 
       {/* ===================================
-          Overview
+          OVERVIEW
           =================================== */}
 
       <section className="vf-overview-section">
@@ -452,13 +461,18 @@ export default function DashboardHome({ onNavigate }) {
             >
               <Icon name="refresh" size={16} />
 
-              {loading ? "Refreshing..." : "Refresh"}
+              {loading
+                ? "Refreshing..."
+                : "Refresh"}
             </button>
           }
         />
 
         {errorCount > 0 && !loading && (
-          <div className="vf-dashboard-alert" role="alert">
+          <div
+            className="vf-dashboard-alert"
+            role="alert"
+          >
             Some dashboard data could not be loaded.
             Check your Backend connection and refresh.
           </div>
@@ -504,7 +518,7 @@ export default function DashboardHome({ onNavigate }) {
       </section>
 
       {/* ===================================
-          Operations
+          OPERATIONS
           =================================== */}
 
       <section className="vf-overview-section">
@@ -514,12 +528,14 @@ export default function DashboardHome({ onNavigate }) {
         />
 
         <div className="vf-dashboard-panel-grid">
+
           {/* Pending bookings */}
 
           <article className="vf-dashboard-panel">
             <div className="vf-dashboard-panel-header">
               <div>
                 <h3>Booking requests</h3>
+
                 <p>
                   Requests awaiting Admin approval.
                 </p>
@@ -531,6 +547,7 @@ export default function DashboardHome({ onNavigate }) {
                 onClick={() => onNavigate("bookings")}
               >
                 View all
+
                 <Icon name="arrow" size={15} />
               </button>
             </div>
@@ -568,7 +585,8 @@ export default function DashboardHome({ onNavigate }) {
                           </strong>
 
                           <small>
-                            User #{booking.requestedByUserId}
+                            User #
+                            {booking.requestedByUserId}
                           </small>
                         </td>
 
@@ -612,9 +630,8 @@ export default function DashboardHome({ onNavigate }) {
             <div className="vf-dashboard-panel-header">
               <div>
                 <h3>Vehicle availability</h3>
-                <p>
-                  Current vehicle status.
-                </p>
+
+                <p>Current vehicle status.</p>
               </div>
 
               <button
@@ -623,6 +640,7 @@ export default function DashboardHome({ onNavigate }) {
                 onClick={() => onNavigate("vans")}
               >
                 View vans
+
                 <Icon name="arrow" size={15} />
               </button>
             </div>
@@ -689,7 +707,7 @@ export default function DashboardHome({ onNavigate }) {
       </section>
 
       {/* ===================================
-          Maintenance
+          MAINTENANCE
           =================================== */}
 
       <section className="vf-overview-section">
@@ -710,7 +728,10 @@ export default function DashboardHome({ onNavigate }) {
         <article className="vf-dashboard-panel">
           <div className="vf-dashboard-panel-header">
             <div>
-              <h3>Scheduled & ongoing maintenance</h3>
+              <h3>
+                Scheduled & ongoing maintenance
+              </h3>
+
               <p>
                 Current and planned vehicle maintenance.
               </p>
@@ -722,6 +743,7 @@ export default function DashboardHome({ onNavigate }) {
               onClick={() => onNavigate("vans")}
             >
               Manage maintenance
+
               <Icon name="arrow" size={15} />
             </button>
           </div>
@@ -766,13 +788,15 @@ export default function DashboardHome({ onNavigate }) {
                       </td>
 
                       <td>
-                        {formatDate(record.scheduledDate)}
+                        {formatDate(
+                          record.scheduledDate
+                        )}
                       </td>
 
                       <td>
                         {formatDate(
                           record.plannedEndDate ||
-                          record.scheduledDate
+                            record.scheduledDate
                         )}
                       </td>
 
@@ -801,7 +825,7 @@ export default function DashboardHome({ onNavigate }) {
       </section>
 
       {/* ===================================
-          Footer
+          FOOTER
           =================================== */}
 
       <div className="vf-dashboard-info">

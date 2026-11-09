@@ -323,7 +323,6 @@ export default function VanManagement() {
     setEditError("");
     setEditLoading(true);
 
-    // Show current table values immediately.
     setEditForm({
       registration: van.registration || "",
       makeModel: van.makeModel || "",
@@ -331,7 +330,6 @@ export default function VanManagement() {
     });
 
     try {
-      // Refresh form values from database.
       const data = await getVanDetails(
         van.vanId
       );
@@ -392,7 +390,6 @@ export default function VanManagement() {
     const capacity =
       Number(editForm.capacity);
 
-    // Frontend validation
     if (!registration) {
       setEditError(
         "Registration number is required."
@@ -523,11 +520,8 @@ export default function VanManagement() {
       ).toLowerCase() === "available"
   ).length;
 
-  const totalSeats = vans.reduce(
-    (total, van) =>
-      total + (Number(van.capacity) || 0),
-    0
-  );
+  // Total passenger capacity
+  // summary calculation removed.
 
   const statusOptions = [
     "All",
@@ -623,7 +617,6 @@ export default function VanManagement() {
 
           {activeTab === "vehicles" && (
             <div className="vf-van-header-actions">
-
               <button
                 type="button"
                 className="vf-van-refresh"
@@ -641,7 +634,6 @@ export default function VanManagement() {
               >
                 + Add Van
               </button>
-
             </div>
           )}
         </header>
@@ -705,7 +697,7 @@ export default function VanManagement() {
         </nav>
 
         {/* =====================================
-            Vehicles Tab
+            VEHICLES TAB
             ===================================== */}
 
         {activeTab === "vehicles" && (
@@ -726,9 +718,12 @@ export default function VanManagement() {
               aria-label="Fleet summary"
             >
 
+              {/* Total vehicles */}
+
               <article className="vf-van-summary-card">
                 <div className="vf-van-summary-label">
                   Total vehicles
+
                   <Icon
                     name="van"
                     size={20}
@@ -746,9 +741,12 @@ export default function VanManagement() {
                 </p>
               </article>
 
+              {/* Available vehicles */}
+
               <article className="vf-van-summary-card">
                 <div className="vf-van-summary-label">
                   Available vehicles
+
                   <Icon
                     name="check"
                     size={20}
@@ -765,33 +763,11 @@ export default function VanManagement() {
                   Marked Available in database
                 </p>
               </article>
-
-              <article className="vf-van-summary-card">
-                <div className="vf-van-summary-label">
-                  Total passenger capacity
-                  <Icon
-                    name="driver"
-                    size={20}
-                  />
-                </div>
-
-                <strong>
-                  {dataReady
-                    ? totalSeats
-                    : "—"}
-                </strong>
-
-                <p>
-                  Combined seating capacity
-                </p>
-              </article>
-
             </section>
 
             {/* Fleet Table */}
 
             <section className="vf-van-panel">
-
               <div className="vf-van-panel-header">
                 <div>
                   <h2>Fleet vehicles</h2>
@@ -857,7 +833,7 @@ export default function VanManagement() {
                 </div>
               </div>
 
-              {/* API error */}
+              {/* API Error */}
 
               {error && (
                 <div
@@ -890,7 +866,7 @@ export default function VanManagement() {
                 </div>
               )}
 
-              {/* Table */}
+              {/* Fleet Table */}
 
               {!error &&
                 !loading &&
@@ -915,7 +891,6 @@ export default function VanManagement() {
                                 <tr
                                   key={van.vanId}
                                 >
-
                                   <td data-label="Vehicle">
                                     <div className="vf-van-vehicle">
                                       <span className="vf-van-vehicle-icon">
@@ -970,7 +945,6 @@ export default function VanManagement() {
 
                                   <td data-label="Actions">
                                     <div className="vf-van-actions">
-
                                       <button
                                         type="button"
                                         className="vf-van-view-btn"
@@ -1003,10 +977,8 @@ export default function VanManagement() {
                                       >
                                         Delete
                                       </button>
-
                                     </div>
                                   </td>
-
                                 </tr>
                               )
                             )}
@@ -1047,7 +1019,6 @@ export default function VanManagement() {
                     : "—"}
                 </span>
               </div>
-
             </section>
 
             <p className="vf-van-note">
@@ -1082,7 +1053,6 @@ export default function VanManagement() {
             vans={vans}
           />
         )}
-
       </div>
 
       {/* =====================================
@@ -1119,7 +1089,6 @@ export default function VanManagement() {
           onClose={closeViewVan}
         >
           <div className="vfm-body">
-
             {viewLoading && (
               <p className="vf-van-detail-loading">
                 Loading vehicle details...
@@ -1161,9 +1130,9 @@ export default function VanManagement() {
                 </div>
 
                 <div className="vf-van-detail-grid">
-
                   <div className="vf-van-detail-item">
                     <span>Van ID</span>
+
                     <strong>
                       #{viewDetails.vanId}
                     </strong>
@@ -1171,6 +1140,7 @@ export default function VanManagement() {
 
                   <div className="vf-van-detail-item">
                     <span>Registration</span>
+
                     <strong>
                       {viewDetails.registration}
                     </strong>
@@ -1178,6 +1148,7 @@ export default function VanManagement() {
 
                   <div className="vf-van-detail-item">
                     <span>Make & Model</span>
+
                     <strong>
                       {viewDetails.makeModel}
                     </strong>
@@ -1185,6 +1156,7 @@ export default function VanManagement() {
 
                   <div className="vf-van-detail-item">
                     <span>Passenger Capacity</span>
+
                     <strong>
                       {viewDetails.capacity} seats
                     </strong>
@@ -1203,11 +1175,11 @@ export default function VanManagement() {
                         }
                       >
                         <span className="vf-van-status-dot" />
+
                         {viewDetails.availabilityStatus}
                       </span>
                     </strong>
                   </div>
-
                 </div>
 
                 <div className="vf-van-detail-note">
@@ -1216,7 +1188,6 @@ export default function VanManagement() {
                 </div>
               </>
             )}
-
           </div>
 
           <div className="vfm-footer">
@@ -1245,9 +1216,7 @@ export default function VanManagement() {
           busy={saving || editLoading}
         >
           <form onSubmit={handleSaveVan}>
-
             <div className="vfm-body">
-
               {editError && (
                 <div
                   className="vfm-error"
@@ -1263,7 +1232,6 @@ export default function VanManagement() {
                 </p>
               ) : (
                 <div className="vf-van-edit-grid">
-
                   <div className="vf-van-edit-field">
                     <label htmlFor="edit-registration">
                       Registration Number
@@ -1346,7 +1314,6 @@ export default function VanManagement() {
                       Managed by the Maintenance workflow.
                     </small>
                   </div>
-
                 </div>
               )}
 
@@ -1355,7 +1322,6 @@ export default function VanManagement() {
                 Vehicle availability is not changed
                 by editing registration, model or capacity.
               </div>
-
             </div>
 
             <div className="vfm-footer">
@@ -1378,7 +1344,6 @@ export default function VanManagement() {
                   : "Save Changes"}
               </button>
             </div>
-
           </form>
         </Modal>
       )}
@@ -1397,7 +1362,6 @@ export default function VanManagement() {
           busy={deleting}
         >
           <div className="vfm-body">
-
             {deleteError && (
               <div
                 className="vfm-error"
@@ -1419,7 +1383,6 @@ export default function VanManagement() {
               Vehicles with Booking, Journey or
               Maintenance history cannot be deleted.
             </p>
-
           </div>
 
           <div className="vfm-footer">
@@ -1445,7 +1408,6 @@ export default function VanManagement() {
           </div>
         </Modal>
       )}
-
     </>
   );
 }

@@ -1562,3 +1562,58 @@
     padding: 16px;
   }
 }
+
+/* =======================================
+   VAN MANAGEMENT SUMMARY - 2 CARDS
+   ======================================= */
+
+/* Desktop and tablet */
+
+.vf-van-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+/* Prevent the last card spanning both columns */
+
+.vf-van-summary .vf-van-summary-card:last-child {
+  grid-column: auto;
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .vf-van-summary {
+    gap: 12px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .vf-van-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .vf-van-summary-card {
+    padding: 15px;
+  }
+
+  .vf-van-summary-label {
+    font-size: 11px;
+  }
+
+  .vf-van-summary-card strong {
+    font-size: 27px;
+  }
+}
+
+/* Very small phones */
+
+@media (max-width: 380px) {
+  .vf-van-summary {
+    grid-template-columns: 1fr;
+  }
+}
