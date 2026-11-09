@@ -1,9 +1,54 @@
 
 import { useEffect, useState } from "react";
 import Modal, { ConfirmModal } from "../components/Modal";
+import logo from "../assets/logo.png";
+import {
+  exportBookingPdf,
+  exportBookingsReportPdf,
+} from "../utils/bookingPdf";
 import "../styles/BookingApprovals.css";
 
 const API = "/api/bookings";
+
+// Report dates use the browser's local calendar.
+// Both start and end dates are inclusive.
+function departureDateKey(value) {
+  if (!value) return "";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  const pad = (number) =>
+    String(number).padStart(2, "0");
+
+  return (
+    `${date.getFullYear()}-` +
+    `${pad(date.getMonth() + 1)}-` +
+    `${pad(date.getDate())}`
+  );
+}
+
+function filterBookingsForReport(
+  items,
+  mode,
+  fromDate,
+  toDate
+) {
+  if (mode === "all") return items;
+
+  return items.filter((booking) => {
+    const key = departureDateKey(
+      booking.departureAt
+    );
+
+    return (
+      key &&
+      key >= fromDate &&
+      key <= toDate
+    );
+  });
+}
 
 const EMPTY_FORM = {
   purpose: "",
@@ -15,8 +60,14 @@ const EMPTY_FORM = {
   repeatWeeks: "1",
 };
 
+// =====================================
+// HELPERS
+// =====================================
+
 function statusOf(value) {
-  return String(value || "").trim().toUpperCase();
+  return String(value || "")
+    .trim()
+    .toUpperCase();
 }
 
 function formatDate(value) {
@@ -24,7 +75,9 @@ function formatDate(value) {
 
   const date = new Date(value);
 
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) {
+    return "—";
+  }
 
   return date.toLocaleString("en-NZ", {
     day: "2-digit",
@@ -43,16 +96,21 @@ function toInputDate(value) {
 
   if (
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(raw) &&
-    !/[zZ]|[+-]\d{2}:\d{2}$/.test(raw.slice(10))
+    !/[zZ]|[+-]\d{2}:\d{2}$/.test(
+      raw.slice(10)
+    )
   ) {
     return raw.slice(0, 16);
   }
 
   const date = new Date(value);
 
-  if (Number.isNaN(date.getTime())) return "";
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
 
-  const pad = (n) => String(n).padStart(2, "0");
+  const pad = (n) =>
+    String(n).padStart(2, "0");
 
   return (
     `${date.getFullYear()}-` +
@@ -62,6 +120,10 @@ function toInputDate(value) {
     `${pad(date.getMinutes())}`
   );
 }
+
+// =====================================
+// API ERROR HANDLING
+// =====================================
 
 async function readApiError(response) {
   if (response.status === 401) {
@@ -77,7 +139,7 @@ async function readApiError(response) {
   try {
     text = await response.text();
   } catch {
-    // Ignore response body errors.
+    // Ignore body read error
   }
 
   try {
@@ -100,13 +162,22 @@ async function readApiError(response) {
       `HTTP ${response.status}`
     );
   } catch {
-    return text && !text.trim().startsWith("<")
+    return text &&
+      !text.trim().startsWith("<")
       ? text
       : `HTTP ${response.status}`;
   }
 }
 
-async function apiRequest(path, method = "GET", body) {
+// =====================================
+// API REQUEST
+// =====================================
+
+async function apiRequest(
+  path,
+  method = "GET",
+  body
+) {
   const headers = {};
 
   if (method !== "GET") {
@@ -124,17 +195,22 @@ async function apiRequest(path, method = "GET", body) {
       );
     }
 
-    const { csrfToken } = await tokenResponse.json();
+    const { csrfToken } =
+      await tokenResponse.json();
 
     if (!csrfToken) {
-      throw new Error("Security token is missing.");
+      throw new Error(
+        "Security token is missing."
+      );
     }
 
-    headers["X-CSRF-TOKEN"] = csrfToken;
+    headers["X-CSRF-TOKEN"] =
+      csrfToken;
   }
 
   if (body !== undefined) {
-    headers["Content-Type"] = "application/json";
+    headers["Content-Type"] =
+      "application/json";
   }
 
   const response = await fetch(path, {
@@ -143,12 +219,16 @@ async function apiRequest(path, method = "GET", body) {
     cache: "no-store",
     headers,
     ...(body !== undefined
-      ? { body: JSON.stringify(body) }
+      ? {
+          body: JSON.stringify(body),
+        }
       : {}),
   });
 
   if (!response.ok) {
-    throw new Error(await readApiError(response));
+    throw new Error(
+      await readApiError(response)
+    );
   }
 
   return response.status === 204
@@ -156,21 +236,38 @@ async function apiRequest(path, method = "GET", body) {
     : response.json();
 }
 
+// =====================================
+// BOOKING VALIDATION
+// =====================================
+
 function validateBooking(form) {
   if (!form.purpose.trim()) {
     return "Booking purpose is required.";
   }
 
-  if (form.purpose.trim().length > 500) {
-    return "Purpose must be 500 characters or less.";
+  if (
+    form.purpose.trim().length > 500
+  ) {
+    return (
+      "Purpose must be 500 characters " +
+      "or less."
+    );
   }
 
-  if (!form.departureAt || !form.returnAt) {
-    return "Departure and return are required.";
+  if (
+    !form.departureAt ||
+    !form.returnAt
+  ) {
+    return (
+      "Departure and return are required."
+    );
   }
 
-  const departure = new Date(form.departureAt);
-  const returnTime = new Date(form.returnAt);
+  const departure =
+    new Date(form.departureAt);
+
+  const returnTime =
+    new Date(form.returnAt);
 
   if (
     Number.isNaN(departure.getTime()) ||
@@ -183,26 +280,35 @@ function validateBooking(form) {
     return "Return must be after departure.";
   }
 
-  const passengers = Number(form.passengerCount);
+  const passengers =
+    Number(form.passengerCount);
 
   if (
     !Number.isInteger(passengers) ||
     passengers < 1 ||
     passengers > 100
   ) {
-    return "Passenger count must be between 1 and 100.";
+    return (
+      "Passenger count must be " +
+      "between 1 and 100."
+    );
   }
 
   if (
-    !["SELF_DRIVE", "DRIVER_REQUIRED"].includes(
-      form.drivingOption
-    )
+    ![
+      "SELF_DRIVE",
+      "DRIVER_REQUIRED",
+    ].includes(form.drivingOption)
   ) {
     return "Invalid driving option.";
   }
 
   return "";
 }
+
+// =====================================
+// DELETE ICON
+// =====================================
 
 function TrashIcon() {
   return (
@@ -227,7 +333,7 @@ function TrashIcon() {
 }
 
 // =====================================
-// Reusable Booking form fields
+// BOOKING FORM FIELDS
 // =====================================
 
 function BookingFields({
@@ -238,6 +344,9 @@ function BookingFields({
 }) {
   return (
     <div className="vfm-form-grid">
+
+      {/* Purpose */}
+
       <div className="vfm-field vfm-full">
         <label htmlFor="booking-purpose">
           Booking purpose
@@ -253,10 +362,15 @@ function BookingFields({
           value={form.purpose}
           placeholder="Reason for booking"
           onChange={(e) =>
-            updateField("purpose", e.target.value)
+            updateField(
+              "purpose",
+              e.target.value
+            )
           }
         />
       </div>
+
+      {/* Departure */}
 
       <div className="vfm-field">
         <label htmlFor="booking-departure">
@@ -270,10 +384,15 @@ function BookingFields({
           disabled={busy}
           value={form.departureAt}
           onChange={(e) =>
-            updateField("departureAt", e.target.value)
+            updateField(
+              "departureAt",
+              e.target.value
+            )
           }
         />
       </div>
+
+      {/* Return */}
 
       <div className="vfm-field">
         <label htmlFor="booking-return">
@@ -285,13 +404,20 @@ function BookingFields({
           type="datetime-local"
           required
           disabled={busy}
-          min={form.departureAt || undefined}
+          min={
+            form.departureAt || undefined
+          }
           value={form.returnAt}
           onChange={(e) =>
-            updateField("returnAt", e.target.value)
+            updateField(
+              "returnAt",
+              e.target.value
+            )
           }
         />
       </div>
+
+      {/* Passengers */}
 
       <div className="vfm-field">
         <label htmlFor="booking-passengers">
@@ -308,10 +434,15 @@ function BookingFields({
           disabled={busy}
           value={form.passengerCount}
           onChange={(e) =>
-            updateField("passengerCount", e.target.value)
+            updateField(
+              "passengerCount",
+              e.target.value
+            )
           }
         />
       </div>
+
+      {/* Driving option */}
 
       <div className="vfm-field">
         <label htmlFor="booking-driving">
@@ -323,7 +454,10 @@ function BookingFields({
           disabled={busy}
           value={form.drivingOption}
           onChange={(e) =>
-            updateField("drivingOption", e.target.value)
+            updateField(
+              "drivingOption",
+              e.target.value
+            )
           }
         >
           <option value="DRIVER_REQUIRED">
@@ -335,6 +469,8 @@ function BookingFields({
           </option>
         </select>
       </div>
+
+      {/* Create-only fields */}
 
       {isCreate && (
         <>
@@ -361,7 +497,8 @@ function BookingFields({
             />
 
             <small>
-              1 = once; 8 = up to eight weekly bookings.
+              1 = once; 8 = up to
+              eight weekly bookings.
             </small>
           </div>
 
@@ -390,58 +527,141 @@ function BookingFields({
       )}
 
       <div className="vfm-form-note vfm-full">
-        Vehicle availability and scheduled maintenance
-        are checked by the server. Self-drive requires
-        driving permission for the booked-for user.
+        Vehicle availability and scheduled
+        maintenance are checked by the server.
+        Self-drive requires driving permission
+        for the booked-for user.
       </div>
+
     </div>
   );
 }
 
 // =====================================
-// Booking Management
+// BOOKING MANAGEMENT
 // =====================================
 
 export default function BookingApprovals() {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [busy, setBusy] = useState(false);
+  // Booking list
+  const [
+    bookings,
+    setBookings,
+  ] = useState([]);
 
-  const [loadError, setLoadError] = useState("");
-  const [actionError, setActionError] = useState("");
-  const [notice, setNotice] = useState("");
+  const [
+    loading,
+    setLoading,
+  ] = useState(true);
 
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [search, setSearch] = useState("");
+  const [
+    busy,
+    setBusy,
+  ] = useState(false);
 
-  const [statusFilter, setStatusFilter] =
-    useState("PENDING");
+  // Single Booking PDF
+  const [
+    exportingBookingId,
+    setExportingBookingId,
+  ] = useState(null);
+
+  // PDF report: all or date range
+  const [
+    reportOpen,
+    setReportOpen,
+  ] = useState(false);
+
+  const [
+    reportMode,
+    setReportMode,
+  ] = useState("all");
+
+  const [
+    fromDate,
+    setFromDate,
+  ] = useState("");
+
+  const [
+    toDate,
+    setToDate,
+  ] = useState("");
+
+  const [
+    reportError,
+    setReportError,
+  ] = useState("");
+
+  const [
+    exportingReport,
+    setExportingReport,
+  ] = useState(false);
+
+  // Messages
+  const [
+    loadError,
+    setLoadError,
+  ] = useState("");
+
+  const [
+    actionError,
+    setActionError,
+  ] = useState("");
+
+  const [
+    notice,
+    setNotice,
+  ] = useState("");
+
+  // Search and filter
+  const [
+    refreshKey,
+    setRefreshKey,
+  ] = useState(0);
+
+  const [
+    search,
+    setSearch,
+  ] = useState("");
+
+  const [
+    statusFilter,
+    setStatusFilter,
+  ] = useState("PENDING");
 
   // Modal types:
   // create, edit, approve, cancel, delete
-  const [modal, setModal] = useState(null);
+  const [
+    modal,
+    setModal,
+  ] = useState(null);
 
-  const [form, setForm] = useState({
+  const [
+    form,
+    setForm,
+  ] = useState({
     ...EMPTY_FORM,
   });
 
   // =====================================
-  // Load bookings
+  // LOAD BOOKINGS
   // =====================================
 
   useEffect(() => {
-    const controller = new AbortController();
+    const controller =
+      new AbortController();
 
     async function load() {
       setLoading(true);
       setLoadError("");
 
       try {
-        const response = await fetch(API, {
-          credentials: "include",
-          cache: "no-store",
-          signal: controller.signal,
-        });
+        const response = await fetch(
+          API,
+          {
+            credentials: "include",
+            cache: "no-store",
+            signal: controller.signal,
+          }
+        );
 
         if (!response.ok) {
           throw new Error(
@@ -449,7 +669,8 @@ export default function BookingApprovals() {
           );
         }
 
-        const data = await response.json();
+        const data =
+          await response.json();
 
         if (!Array.isArray(data)) {
           throw new Error(
@@ -463,7 +684,8 @@ export default function BookingApprovals() {
       } catch (err) {
         if (!controller.signal.aborted) {
           setLoadError(
-            err.message || "Could not load bookings."
+            err.message ||
+            "Could not load bookings."
           );
         }
       } finally {
@@ -479,11 +701,155 @@ export default function BookingApprovals() {
   }, [refreshKey]);
 
   function reload() {
-    setRefreshKey((value) => value + 1);
+    setRefreshKey(
+      (value) => value + 1
+    );
   }
 
   // =====================================
-  // Modal helpers
+  // EXPORT INDIVIDUAL BOOKING
+  // =====================================
+
+  async function downloadBookingPdf(
+    booking
+  ) {
+    if (
+      exportingBookingId !== null
+    ) {
+      return;
+    }
+
+    setActionError("");
+    setExportingBookingId(
+      booking.bookingId
+    );
+
+    try {
+      const latest = await apiRequest(
+        `${API}/${booking.bookingId}`
+      );
+
+      await exportBookingPdf(
+        latest,
+        logo
+      );
+    } catch (error) {
+      setActionError(
+        error instanceof Error
+          ? error.message
+          : "Could not export booking PDF."
+      );
+    } finally {
+      setExportingBookingId(null);
+    }
+  }
+
+  // =====================================
+  // EXPORT ALL / DATE RANGE
+  // =====================================
+
+  function openReportDialog() {
+    setReportError("");
+    setReportOpen(true);
+  }
+
+  function closeReportDialog() {
+    if (exportingReport) return;
+
+    setReportOpen(false);
+    setReportError("");
+  }
+
+  async function downloadBookingsReport(
+    event
+  ) {
+    event.preventDefault();
+
+    if (
+      exportingReport ||
+      busy
+    ) {
+      return;
+    }
+
+    if (reportMode === "range") {
+      if (
+        !fromDate ||
+        !toDate
+      ) {
+        setReportError(
+          "Please select both From date and To date."
+        );
+        return;
+      }
+
+      if (fromDate > toDate) {
+        setReportError(
+          "From date must not be later than To date."
+        );
+        return;
+      }
+    }
+
+    setExportingReport(true);
+    setReportError("");
+
+    try {
+      // Fetch all current Admin bookings.
+      // Ignore search/status filters on screen.
+
+      const latest =
+        await apiRequest(API);
+
+      if (!Array.isArray(latest)) {
+        throw new Error(
+          "Unexpected booking API response."
+        );
+      }
+
+      const selected =
+        filterBookingsForReport(
+          latest,
+          reportMode,
+          fromDate,
+          toDate
+        );
+
+      if (selected.length === 0) {
+        throw new Error(
+          "No bookings found for the selected period."
+        );
+      }
+
+      await exportBookingsReportPdf(
+        selected,
+        logo,
+        {
+          fromDate:
+            reportMode === "range"
+              ? fromDate
+              : null,
+          toDate:
+            reportMode === "range"
+              ? toDate
+              : null,
+        }
+      );
+
+      setReportOpen(false);
+    } catch (error) {
+      setReportError(
+        error instanceof Error
+          ? error.message
+          : "Unable to export PDF report."
+      );
+    } finally {
+      setExportingReport(false);
+    }
+  }
+
+  // =====================================
+  // MODAL HELPERS
   // =====================================
 
   function closeModal() {
@@ -502,18 +868,27 @@ export default function BookingApprovals() {
     setActionError("");
   }
 
-  function openModal(type, booking = null) {
+  function openModal(
+    type,
+    booking = null
+  ) {
     if (busy) return;
 
     setActionError("");
     setNotice("");
 
     if (type === "create") {
-      setForm({ ...EMPTY_FORM });
+      setForm({
+        ...EMPTY_FORM,
+      });
     }
 
     if (type === "edit") {
-      if (statusOf(booking?.status) !== "PENDING") {
+      if (
+        statusOf(
+          booking?.status
+        ) !== "PENDING"
+      ) {
         return;
       }
 
@@ -530,7 +905,8 @@ export default function BookingApprovals() {
           booking.passengerCount
         ),
         drivingOption:
-          booking.drivingOption || "SELF_DRIVE",
+          booking.drivingOption ||
+          "SELF_DRIVE",
       });
     }
 
@@ -541,7 +917,7 @@ export default function BookingApprovals() {
   }
 
   // =====================================
-  // Shared API mutation helper
+  // SHARED API MUTATION
   // =====================================
 
   async function runAction(callback) {
@@ -556,7 +932,8 @@ export default function BookingApprovals() {
       reload();
     } catch (err) {
       setActionError(
-        err?.message || "Operation failed."
+        err?.message ||
+        "Operation failed."
       );
     } finally {
       setBusy(false);
@@ -564,19 +941,21 @@ export default function BookingApprovals() {
   }
 
   // =====================================
-  // Create Booking
+  // CREATE BOOKING
   // =====================================
 
   async function createBooking(event) {
     event.preventDefault();
 
-    const error = validateBooking(form);
+    const error =
+      validateBooking(form);
 
     if (error) {
       return setActionError(error);
     }
 
-    const weeks = Number(form.repeatWeeks);
+    const weeks =
+      Number(form.repeatWeeks);
 
     if (
       !Number.isInteger(weeks) ||
@@ -591,9 +970,10 @@ export default function BookingApprovals() {
     const userIdText =
       form.bookedForUserId.trim();
 
-    const bookedForUserId = userIdText
-      ? Number(userIdText)
-      : null;
+    const bookedForUserId =
+      userIdText
+        ? Number(userIdText)
+        : null;
 
     if (
       userIdText &&
@@ -608,21 +988,27 @@ export default function BookingApprovals() {
     }
 
     await runAction(async () => {
-      const result = await apiRequest(
-        API,
-        "POST",
-        {
-          purpose: form.purpose.trim(),
-          departureAt: form.departureAt,
-          returnAt: form.returnAt,
-          passengerCount: Number(
-            form.passengerCount
-          ),
-          drivingOption: form.drivingOption,
-          bookedForUserId,
-          repeatWeeks: weeks,
-        }
-      );
+      const result =
+        await apiRequest(
+          API,
+          "POST",
+          {
+            purpose:
+              form.purpose.trim(),
+            departureAt:
+              form.departureAt,
+            returnAt:
+              form.returnAt,
+            passengerCount:
+              Number(
+                form.passengerCount
+              ),
+            drivingOption:
+              form.drivingOption,
+            bookedForUserId,
+            repeatWeeks: weeks,
+          }
+        );
 
       setModal(null);
       setStatusFilter("ALL");
@@ -640,34 +1026,43 @@ export default function BookingApprovals() {
   }
 
   // =====================================
-  // Edit Booking
+  // EDIT BOOKING
   // =====================================
 
   async function saveEdit(event) {
     event.preventDefault();
 
-    if (modal?.type !== "edit") return;
+    if (modal?.type !== "edit") {
+      return;
+    }
 
-    const error = validateBooking(form);
+    const error =
+      validateBooking(form);
 
     if (error) {
       return setActionError(error);
     }
 
-    const bookingId = modal.booking.bookingId;
+    const bookingId =
+      modal.booking.bookingId;
 
     await runAction(async () => {
       await apiRequest(
         `${API}/${bookingId}`,
         "PUT",
         {
-          purpose: form.purpose.trim(),
-          departureAt: form.departureAt,
-          returnAt: form.returnAt,
-          passengerCount: Number(
-            form.passengerCount
-          ),
-          drivingOption: form.drivingOption,
+          purpose:
+            form.purpose.trim(),
+          departureAt:
+            form.departureAt,
+          returnAt:
+            form.returnAt,
+          passengerCount:
+            Number(
+              form.passengerCount
+            ),
+          drivingOption:
+            form.drivingOption,
         }
       );
 
@@ -680,20 +1075,23 @@ export default function BookingApprovals() {
   }
 
   // =====================================
-  // Approve Booking
-  // Uses shared confirmation popup
+  // APPROVE BOOKING
   // =====================================
 
   async function approveBooking() {
-    if (modal?.type !== "approve") return;
+    if (modal?.type !== "approve") {
+      return;
+    }
 
-    const id = modal.booking.bookingId;
+    const id =
+      modal.booking.bookingId;
 
     await runAction(async () => {
-      const result = await apiRequest(
-        `${API}/${id}/approve`,
-        "PUT"
-      );
+      const result =
+        await apiRequest(
+          `${API}/${id}/approve`,
+          "PUT"
+        );
 
       setModal(null);
 
@@ -709,48 +1107,53 @@ export default function BookingApprovals() {
   }
 
   // =====================================
-  // Cancel Booking
-  //
-  // Option 1: Only this booking
-  // Option 2: This and future bookings
+  // CANCEL BOOKING
   // =====================================
 
-  async function confirmCancel(cancelFollowing) {
-    if (modal?.type !== "cancel") return;
+  async function confirmCancel(
+    cancelFollowing
+  ) {
+    if (modal?.type !== "cancel") {
+      return;
+    }
 
-    const id = modal.booking.bookingId;
+    const id =
+      modal.booking.bookingId;
 
     await runAction(async () => {
-      const result = await apiRequest(
-        `${API}/${id}/cancel?cancelFollowing=${cancelFollowing}`,
-        "PUT"
-      );
+      const result =
+        await apiRequest(
+          `${API}/${id}/cancel?cancelFollowing=${cancelFollowing}`,
+          "PUT"
+        );
 
       setModal(null);
 
       setNotice(
         `${result.cancelledCount ?? 1} booking(s) cancelled. ` +
-        `History preserved.` +
+        "History preserved." +
         (
           result.emailsFailed > 0
             ? ` ${result.emailsFailed} email(s) failed.`
             : result.emailSent === false
-            ? " Cancellation email could not be sent."
-            : ""
+              ? " Cancellation email could not be sent."
+              : ""
         )
       );
     });
   }
 
   // =====================================
-  // Delete Booking
-  // Uses shared confirmation popup
+  // DELETE BOOKING
   // =====================================
 
   async function deleteBooking() {
-    if (modal?.type !== "delete") return;
+    if (modal?.type !== "delete") {
+      return;
+    }
 
-    const id = modal.booking.bookingId;
+    const id =
+      modal.booking.bookingId;
 
     await runAction(async () => {
       await apiRequest(
@@ -767,50 +1170,74 @@ export default function BookingApprovals() {
   }
 
   // =====================================
-  // Booking statistics
+  // STATISTICS
   // =====================================
 
-  const pending = bookings.filter(
-    (b) => statusOf(b.status) === "PENDING"
-  ).length;
+  const pending =
+    bookings.filter(
+      (booking) =>
+        statusOf(
+          booking.status
+        ) === "PENDING"
+    ).length;
 
-  const approved = bookings.filter(
-    (b) => statusOf(b.status) === "APPROVED"
-  ).length;
+  const approved =
+    bookings.filter(
+      (booking) =>
+        statusOf(
+          booking.status
+        ) === "APPROVED"
+    ).length;
 
-  const cancelled = bookings.filter(
-    (b) => statusOf(b.status) === "CANCELLED"
-  ).length;
+  const cancelled =
+    bookings.filter(
+      (booking) =>
+        statusOf(
+          booking.status
+        ) === "CANCELLED"
+    ).length;
 
   // =====================================
-  // Search and filter
+  // SEARCH AND FILTER
   // =====================================
 
   const filtered = bookings
     .filter((booking) => {
-      const keyword = search.trim().toLowerCase();
+      const keyword =
+        search.trim().toLowerCase();
 
       const matchesSearch =
-        String(booking.bookingId).includes(keyword) ||
+        String(
+          booking.bookingId
+        ).includes(keyword) ||
         String(
           booking.requestedByUserId ?? ""
         ).includes(keyword) ||
-        String(booking.purpose || "")
+        String(
+          booking.purpose || ""
+        )
           .toLowerCase()
           .includes(keyword);
 
       const matchesStatus =
         statusFilter === "ALL" ||
-        statusOf(booking.status) === statusFilter;
+        statusOf(
+          booking.status
+        ) === statusFilter;
 
-      return matchesSearch && matchesStatus;
+      return (
+        matchesSearch &&
+        matchesStatus
+      );
     })
     .sort((a, b) => {
       const aPending =
-        statusOf(a.status) === "PENDING";
+        statusOf(a.status) ===
+        "PENDING";
 
       const bPending =
-        statusOf(b.status) === "PENDING";
+        statusOf(b.status) ===
+        "PENDING";
 
       if (aPending !== bPending) {
         return aPending ? -1 : 1;
@@ -823,7 +1250,7 @@ export default function BookingApprovals() {
     });
 
   // =====================================
-  // Recurring cancellation summary
+  // RECURRING CANCELLATION
   // =====================================
 
   const cancelTarget =
@@ -834,24 +1261,43 @@ export default function BookingApprovals() {
   const futureCount =
     cancelTarget?.recurrenceGroupId
       ? bookings.filter(
-          (b) =>
-            b.recurrenceGroupId ===
+          (booking) =>
+            booking.recurrenceGroupId ===
               cancelTarget.recurrenceGroupId &&
-            new Date(b.departureAt) >=
-              new Date(cancelTarget.departureAt) &&
-            ["PENDING", "APPROVED"].includes(
-              statusOf(b.status)
+            new Date(
+              booking.departureAt
+            ) >=
+              new Date(
+                cancelTarget.departureAt
+              ) &&
+            [
+              "PENDING",
+              "APPROVED",
+            ].includes(
+              statusOf(
+                booking.status
+              )
             )
         ).length
       : 1;
 
+  const reportPreviewCount =
+    filterBookingsForReport(
+      bookings,
+      reportMode,
+      fromDate,
+      toDate
+    ).length;
+
+  // =====================================
+  // RENDER PAGE
+  // =====================================
+
   return (
     <>
-      {/* ===================================
-          Main Booking page
-          =================================== */}
-
       <div className="vf-booking-page">
+
+        {/* Header */}
 
         <header className="vf-booking-header">
           <div>
@@ -859,57 +1305,101 @@ export default function BookingApprovals() {
               BOOKING MANAGEMENT
             </span>
 
-            <h1>Booking Management</h1>
+            <h1>
+              Booking Management
+            </h1>
 
             <p>
-              Create, review, approve and cancel
-              vehicle bookings.
+              Create, review, approve and
+              cancel vehicle bookings.
             </p>
           </div>
 
           <div className="vf-booking-header-actions">
+
             <button
               type="button"
               className="vf-booking-refresh"
               onClick={reload}
-              disabled={busy || loading}
+              disabled={
+                busy ||
+                loading
+              }
             >
               ↻ Refresh
+            </button>
+
+            {/* All / Date range PDF */}
+
+            <button
+              type="button"
+              className="vf-booking-export-main"
+              onClick={openReportDialog}
+              disabled={
+                busy ||
+                loading ||
+                exportingReport
+              }
+            >
+              Export PDF
             </button>
 
             <button
               type="button"
               className="vf-booking-approve"
-              onClick={() => openModal("create")}
+              onClick={() =>
+                openModal("create")
+              }
               disabled={busy}
             >
               + Add Booking
             </button>
+
           </div>
         </header>
 
-        {/* Statistics */}
+        {/* Summary Cards */}
 
         <section className="vf-booking-summary">
           {[
-            ["Total bookings", bookings.length],
-            ["Pending approval", pending],
-            ["Approved", approved],
-            ["Cancelled", cancelled],
-          ].map(([label, number]) => (
-            <article
-              key={label}
-              className="vf-booking-summary-card"
-            >
-              <span>{label}</span>
+            [
+              "Total bookings",
+              bookings.length,
+            ],
+            [
+              "Pending approval",
+              pending,
+            ],
+            [
+              "Approved",
+              approved,
+            ],
+            [
+              "Cancelled",
+              cancelled,
+            ],
+          ].map(
+            ([label, number]) => (
+              <article
+                key={label}
+                className="vf-booking-summary-card"
+              >
+                <span>
+                  {label}
+                </span>
 
-              <strong>
-                {loading ? "—" : number}
-              </strong>
+                <strong>
+                  {loading
+                    ? "—"
+                    : number}
+                </strong>
 
-              <small>Live database records</small>
-            </article>
-          ))}
+                <small>
+                  Live database records
+                </small>
+              </article>
+            )
+          )}
         </section>
 
         {/* Notifications */}
@@ -923,14 +1413,15 @@ export default function BookingApprovals() {
           </div>
         )}
 
-        {!modal && actionError && (
-          <div
-            className="vf-booking-error"
-            role="alert"
-          >
-            {actionError}
-          </div>
-        )}
+        {!modal &&
+          actionError && (
+            <div
+              className="vf-booking-error"
+              role="alert"
+            >
+              {actionError}
+            </div>
+          )}
 
         {notice && (
           <div
@@ -941,15 +1432,15 @@ export default function BookingApprovals() {
           </div>
         )}
 
-        {/* ===================================
-            Booking table
-            =================================== */}
+        {/* Booking Table */}
 
         <section className="vf-booking-panel">
 
           <div className="vf-booking-panel-header">
             <div>
-              <h2>Booking requests</h2>
+              <h2>
+                Booking requests
+              </h2>
 
               <p>
                 Live data from VisionFleetDB
@@ -960,6 +1451,8 @@ export default function BookingApprovals() {
               {filtered.length} booking(s)
             </span>
           </div>
+
+          {/* Search / Status filter */}
 
           <div className="vf-booking-toolbar">
 
@@ -974,7 +1467,9 @@ export default function BookingApprovals() {
                 placeholder="ID, requester or purpose..."
                 value={search}
                 onChange={(e) =>
-                  setSearch(e.target.value)
+                  setSearch(
+                    e.target.value
+                  )
                 }
               />
             </div>
@@ -988,7 +1483,9 @@ export default function BookingApprovals() {
                 id="booking-filter"
                 value={statusFilter}
                 onChange={(e) =>
-                  setStatusFilter(e.target.value)
+                  setStatusFilter(
+                    e.target.value
+                  )
                 }
               >
                 <option value="PENDING">
@@ -1015,6 +1512,8 @@ export default function BookingApprovals() {
 
           </div>
 
+          {/* Results */}
+
           {loading ? (
             <div className="vf-booking-empty">
               Loading bookings...
@@ -1025,8 +1524,8 @@ export default function BookingApprovals() {
             </div>
           ) : (
             <div className="vf-booking-table-scroll">
-
               <table className="vf-booking-table">
+
                 <thead>
                   <tr>
                     <th>BOOKING</th>
@@ -1041,153 +1540,207 @@ export default function BookingApprovals() {
                 </thead>
 
                 <tbody>
-                  {filtered.map((booking) => {
-                    const status = statusOf(
-                      booking.status
-                    );
+                  {filtered.map(
+                    (booking) => {
+                      const status =
+                        statusOf(
+                          booking.status
+                        );
 
-                    const isPending =
-                      status === "PENDING";
+                      const isPending =
+                        status === "PENDING";
 
-                    const canCancel =
-                      isPending ||
-                      status === "APPROVED";
+                      const canCancel =
+                        isPending ||
+                        status === "APPROVED";
 
-                    return (
-                      <tr key={booking.bookingId}>
+                      return (
+                        <tr
+                          key={
+                            booking.bookingId
+                          }
+                        >
 
-                        <td data-label="Booking">
-                          <div className="vf-booking-identity">
-                            <strong>
-                              #{booking.bookingId}
-                            </strong>
+                          {/* Booking */}
 
-                            <small>
-                              {booking.purpose ||
-                                "No purpose"}
-                            </small>
+                          <td data-label="Booking">
+                            <div className="vf-booking-identity">
+                              <strong>
+                                #
+                                {booking.bookingId}
+                              </strong>
 
-                            {booking.recurrenceGroupId && (
                               <small>
-                                Recurring booking
+                                {booking.purpose ||
+                                  "No purpose"}
                               </small>
+
+                              {booking.recurrenceGroupId && (
+                                <small>
+                                  Recurring booking
+                                </small>
+                              )}
+                            </div>
+                          </td>
+
+                          {/* Requester */}
+
+                          <td data-label="Requested by">
+                            User #
+                            {booking.requestedByUserId}
+                          </td>
+
+                          {/* Departure */}
+
+                          <td data-label="Departure">
+                            {formatDate(
+                              booking.departureAt
                             )}
-                          </div>
-                        </td>
+                          </td>
 
-                        <td data-label="Requested by">
-                          User #
-                          {booking.requestedByUserId}
-                        </td>
+                          {/* Return */}
 
-                        <td data-label="Departure">
-                          {formatDate(
-                            booking.departureAt
-                          )}
-                        </td>
-
-                        <td data-label="Return">
-                          {formatDate(
-                            booking.returnAt
-                          )}
-                        </td>
-
-                        <td data-label="Passengers">
-                          {booking.passengerCount}
-                        </td>
-
-                        <td data-label="Van ID">
-                          {booking.assignedVanId == null
-                            ? "Not assigned"
-                            : `#${booking.assignedVanId}`}
-                        </td>
-
-                        <td data-label="Status">
-                          <span
-                            className={
-                              `vf-booking-status ` +
-                              `vf-booking-${status.toLowerCase()}`
-                            }
-                          >
-                            {status}
-                          </span>
-                        </td>
-
-                        <td data-label="Actions">
-                          <div className="vf-booking-inline-actions">
-
-                            {isPending && (
-                              <>
-                                <button
-                                  type="button"
-                                  className="vf-booking-approve"
-                                  disabled={busy}
-                                  onClick={() =>
-                                    openModal(
-                                      "edit",
-                                      booking
-                                    )
-                                  }
-                                >
-                                  Edit
-                                </button>
-
-                                <button
-                                  type="button"
-                                  className="vf-booking-approve"
-                                  disabled={busy}
-                                  onClick={() =>
-                                    openModal(
-                                      "approve",
-                                      booking
-                                    )
-                                  }
-                                >
-                                  Approve
-                                </button>
-                              </>
+                          <td data-label="Return">
+                            {formatDate(
+                              booking.returnAt
                             )}
+                          </td>
 
-                            {canCancel && (
+                          {/* Passengers */}
+
+                          <td data-label="Passengers">
+                            {booking.passengerCount}
+                          </td>
+
+                          {/* Van */}
+
+                          <td data-label="Van ID">
+                            {booking.assignedVanId == null
+                              ? "Not assigned"
+                              : `#${booking.assignedVanId}`}
+                          </td>
+
+                          {/* Status */}
+
+                          <td data-label="Status">
+                            <span
+                              className={
+                                "vf-booking-status " +
+                                `vf-booking-${status.toLowerCase()}`
+                              }
+                            >
+                              {status}
+                            </span>
+                          </td>
+
+                          {/* Actions */}
+
+                          <td data-label="Actions">
+                            <div className="vf-booking-inline-actions">
+
+                              {/* Individual PDF */}
+
                               <button
                                 type="button"
-                                className="vf-booking-cancel-action"
+                                className="vf-booking-pdf-action"
+                                disabled={
+                                  busy ||
+                                  exportingBookingId !== null
+                                }
+                                onClick={() =>
+                                  downloadBookingPdf(
+                                    booking
+                                  )
+                                }
+                                aria-label={
+                                  `Download PDF for booking ${booking.bookingId}`
+                                }
+                              >
+                                {exportingBookingId ===
+                                  booking.bookingId
+                                  ? "Exporting..."
+                                  : "Download PDF"}
+                              </button>
+
+                              {/* Edit & Approve */}
+
+                              {isPending && (
+                                <>
+                                  <button
+                                    type="button"
+                                    className="vf-booking-approve"
+                                    disabled={busy}
+                                    onClick={() =>
+                                      openModal(
+                                        "edit",
+                                        booking
+                                      )
+                                    }
+                                  >
+                                    Edit
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    className="vf-booking-approve"
+                                    disabled={busy}
+                                    onClick={() =>
+                                      openModal(
+                                        "approve",
+                                        booking
+                                      )
+                                    }
+                                  >
+                                    Approve
+                                  </button>
+                                </>
+                              )}
+
+                              {/* Cancel */}
+
+                              {canCancel && (
+                                <button
+                                  type="button"
+                                  className="vf-booking-cancel-action"
+                                  disabled={busy}
+                                  onClick={() =>
+                                    openModal(
+                                      "cancel",
+                                      booking
+                                    )
+                                  }
+                                >
+                                  Cancel
+                                </button>
+                              )}
+
+                              {/* Delete */}
+
+                              <button
+                                type="button"
+                                className="vf-booking-trash-action"
                                 disabled={busy}
+                                title="Permanently delete"
+                                aria-label={
+                                  `Delete booking ${booking.bookingId}`
+                                }
                                 onClick={() =>
                                   openModal(
-                                    "cancel",
+                                    "delete",
                                     booking
                                   )
                                 }
                               >
-                                Cancel
+                                <TrashIcon />
                               </button>
-                            )}
 
-                            <button
-                              type="button"
-                              className="vf-booking-trash-action"
-                              disabled={busy}
-                              title="Permanently delete"
-                              aria-label={
-                                `Delete booking ${booking.bookingId}`
-                              }
-                              onClick={() =>
-                                openModal(
-                                  "delete",
-                                  booking
-                                )
-                              }
-                            >
-                              <TrashIcon />
-                            </button>
+                            </div>
+                          </td>
 
-                          </div>
-                        </td>
-
-                      </tr>
-                    );
-                  })}
+                        </tr>
+                      );
+                    }
+                  )}
                 </tbody>
 
               </table>
@@ -1197,7 +1750,8 @@ export default function BookingApprovals() {
           <div className="vf-booking-footer">
             <span>
               Cancel preserves history.
-              Delete permanently removes the booking.
+              Delete permanently removes
+              the booking.
             </span>
 
             <span>
@@ -1209,9 +1763,193 @@ export default function BookingApprovals() {
         </section>
       </div>
 
-      {/* ===================================
-          CREATE / EDIT MODAL
-          =================================== */}
+      {/* =====================================
+          EXPORT ALL / DATE RANGE MODAL
+          ===================================== */}
+
+      {reportOpen && (
+        <Modal
+          open
+          title="Export Bookings to PDF"
+          subtitle="Download all bookings or a selected departure-date range."
+          size="md"
+          busy={exportingReport}
+          onClose={closeReportDialog}
+        >
+          <form
+            onSubmit={
+              downloadBookingsReport
+            }
+          >
+
+            <div className="vfm-body vf-booking-report-body">
+
+              {reportError && (
+                <div
+                  className="vfm-error"
+                  role="alert"
+                >
+                  {reportError}
+                </div>
+              )}
+
+              {/* Report Mode */}
+
+              <fieldset
+                className="vf-booking-report-options"
+                disabled={exportingReport}
+              >
+                <legend>
+                  What would you like to export?
+                </legend>
+
+                <label className="vf-booking-report-option">
+                  <input
+                    type="radio"
+                    name="booking-report-mode"
+                    value="all"
+                    checked={
+                      reportMode === "all"
+                    }
+                    onChange={() => {
+                      setReportMode("all");
+                      setReportError("");
+                    }}
+                  />
+
+                  <span>
+                    <strong>
+                      All Bookings
+                    </strong>
+
+                    <small>
+                      Every booking, including
+                      Pending, Approved
+                      and Cancelled
+                    </small>
+                  </span>
+                </label>
+
+                <label className="vf-booking-report-option">
+                  <input
+                    type="radio"
+                    name="booking-report-mode"
+                    value="range"
+                    checked={
+                      reportMode === "range"
+                    }
+                    onChange={() => {
+                      setReportMode("range");
+                      setReportError("");
+                    }}
+                  />
+
+                  <span>
+                    <strong>
+                      Date Range
+                    </strong>
+
+                    <small>
+                      Bookings departing within
+                      the selected dates (inclusive)
+                    </small>
+                  </span>
+                </label>
+              </fieldset>
+
+              {/* Date Range */}
+
+              {reportMode === "range" && (
+                <div className="vf-booking-report-dates">
+
+                  <label htmlFor="report-from-date">
+                    From date
+
+                    <input
+                      id="report-from-date"
+                      type="date"
+                      value={fromDate}
+                      max={
+                        toDate ||
+                        undefined
+                      }
+                      onChange={(e) => {
+                        setFromDate(
+                          e.target.value
+                        );
+                        setReportError("");
+                      }}
+                      disabled={exportingReport}
+                      required
+                    />
+                  </label>
+
+                  <label htmlFor="report-to-date">
+                    To date
+
+                    <input
+                      id="report-to-date"
+                      type="date"
+                      value={toDate}
+                      min={
+                        fromDate ||
+                        undefined
+                      }
+                      onChange={(e) => {
+                        setToDate(
+                          e.target.value
+                        );
+                        setReportError("");
+                      }}
+                      disabled={exportingReport}
+                      required
+                    />
+                  </label>
+
+                </div>
+              )}
+
+              {/* Preview Count */}
+
+              <p className="vf-booking-report-note">
+                {
+                  reportMode === "range" &&
+                  (!fromDate || !toDate)
+                    ? "Select both dates to preview the number of bookings."
+                    : `${reportPreviewCount} booking(s) in the currently loaded data. The full list will be refreshed before export.`
+                }
+              </p>
+
+            </div>
+
+            <div className="vfm-footer">
+              <button
+                type="button"
+                className="vfm-btn vfm-btn-secondary"
+                onClick={closeReportDialog}
+                disabled={exportingReport}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="vfm-btn vfm-btn-primary"
+                disabled={exportingReport}
+              >
+                {exportingReport
+                  ? "Generating PDF..."
+                  : "Download Report PDF"}
+              </button>
+            </div>
+
+          </form>
+        </Modal>
+      )}
+
+      {/* =====================================
+          CREATE / EDIT BOOKING MODAL
+          ===================================== */}
 
       {(
         modal?.type === "create" ||
@@ -1232,7 +1970,6 @@ export default function BookingApprovals() {
           onClose={closeModal}
           size="md"
         >
-
           <form
             onSubmit={
               modal.type === "create"
@@ -1240,8 +1977,8 @@ export default function BookingApprovals() {
                 : saveEdit
             }
           >
-
             <div className="vfm-body">
+
               {actionError && (
                 <div
                   className="vfm-error"
@@ -1259,6 +1996,7 @@ export default function BookingApprovals() {
                   modal.type === "create"
                 }
               />
+
             </div>
 
             <div className="vfm-footer">
@@ -1277,27 +2015,21 @@ export default function BookingApprovals() {
                 disabled={busy}
               >
                 {busy
-                  ? (
-                    modal.type === "create"
-                      ? "Creating..."
-                      : "Saving..."
-                  )
-                  : (
-                    modal.type === "create"
-                      ? "Create Booking"
-                      : "Save Changes"
-                  )
-                }
+                  ? modal.type === "create"
+                    ? "Creating..."
+                    : "Saving..."
+                  : modal.type === "create"
+                    ? "Create Booking"
+                    : "Save Changes"}
               </button>
             </div>
-
           </form>
         </Modal>
       )}
 
-      {/* ===================================
+      {/* =====================================
           CANCEL MODAL
-          =================================== */}
+          ===================================== */}
 
       {cancelTarget && (
         <Modal
@@ -1309,7 +2041,6 @@ export default function BookingApprovals() {
           onClose={closeModal}
           busy={busy}
         >
-
           <div className="vfm-body">
 
             {actionError && (
@@ -1322,20 +2053,29 @@ export default function BookingApprovals() {
             )}
 
             <div className="vfm-cancel-summary">
+
               <p>
-                <strong>Departure:</strong>{" "}
+                <strong>
+                  Departure:
+                </strong>{" "}
                 {formatDate(
                   cancelTarget.departureAt
                 )}
               </p>
 
               <p>
-                <strong>Status:</strong>{" "}
-                {statusOf(cancelTarget.status)}
+                <strong>
+                  Status:
+                </strong>{" "}
+                {statusOf(
+                  cancelTarget.status
+                )}
               </p>
 
               <p>
-                <strong>Recurring booking:</strong>{" "}
+                <strong>
+                  Recurring booking:
+                </strong>{" "}
                 {cancelTarget.recurrenceGroupId
                   ? "Yes"
                   : "No"}
@@ -1352,8 +2092,9 @@ export default function BookingApprovals() {
             </div>
 
             <p className="vfm-confirm-message">
-              Cancelled bookings remain in the database
-              as CANCELLED. The requester will receive
+              Cancelled bookings remain in
+              the database as CANCELLED.
+              The requester will receive
               a cancellation email if available.
             </p>
 
@@ -1397,14 +2138,13 @@ export default function BookingApprovals() {
               </button>
 
             </div>
-
           </div>
         </Modal>
       )}
 
-      {/* ===================================
-          APPROVE CONFIRMATION MODAL
-          =================================== */}
+      {/* =====================================
+          APPROVE CONFIRMATION
+          ===================================== */}
 
       {modal?.type === "approve" && (
         <ConfirmModal
@@ -1425,9 +2165,9 @@ export default function BookingApprovals() {
         />
       )}
 
-      {/* ===================================
-          DELETE CONFIRMATION MODAL
-          =================================== */}
+      {/* =====================================
+          DELETE CONFIRMATION
+          ===================================== */}
 
       {modal?.type === "delete" && (
         <ConfirmModal
